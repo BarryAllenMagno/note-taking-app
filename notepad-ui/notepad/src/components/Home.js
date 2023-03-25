@@ -13,7 +13,8 @@ import {
     ModalCloseButton,
     useDisclosure,
     Input,
-    Textarea
+    Textarea,
+    FormControl
 } from "@chakra-ui/react";
 import React from "react";
 import axios from "axios";
@@ -28,7 +29,7 @@ export default function Home() {
         }
         fetchData();
     }, []);
-
+// isOpen={showAddedModal} onClose={handleShowAddedModal}>
     const url = "http://localhost:3001";
     const [notepadList, setNotepadList] = React.useState([]);
     const [id, setId] = React.useState(0);
@@ -37,6 +38,13 @@ export default function Home() {
     const [showAddModal, setShowAddModal] = React.useState(false);
     const [title, setTitle] = React.useState("");
     const [content, setContent] = React.useState("");
+    const [titleError, setTitleError] = React.useState(false);
+    const [contentError, setContentError] = React.useState(false);
+    const [showAddedModal, setShowAddedModal] = React.useState(false);
+
+    function handleSetShowAddedModal() {
+        setShowAddedModal(false);
+    }
 
     function handleCloseAddModal() {
         setShowAddModal(false)
@@ -66,7 +74,8 @@ export default function Home() {
             };
             var newNotepad = await axios.post(url, inputData);
             clearData();
-            alert("Notepad added successfully!")
+            // alert("Notepad added successfully!")
+            setShowAddedModal(true);
             console.log(newNotepad);
             setShowAddModal(false);
             loadData();
@@ -117,6 +126,18 @@ export default function Home() {
                 [name]: value
             };
         });
+
+        if (name === "title" && value === "") {
+            setTitleError(true);
+        } else if (name === "content" && value === "") {
+            setContentError(true);
+
+        } else {
+            setTitleError(false);
+            setContentError(false);
+
+        }
+
     };
 
     // async function saveUpdatedNotepad() {
@@ -126,15 +147,23 @@ export default function Home() {
     //     loadData();
     // }
     async function saveUpdatedNotepad() {
-        const updatedTimestamp = new Date(); // Get current date and time
-        const updatedNotepadWithTimestamp = {
-            ...updatedNotepad,
-            timestamp: updatedTimestamp // Include timestamp field with current date and time
-        };
-        console.log(updatedNotepadWithTimestamp);
-        await axios.put(url, updatedNotepadWithTimestamp);
-        setShowUpdate(false);
-        loadData();
+
+        if (updatedNotepad.title === "" || updatedNotepad.content === "") {
+            alert("Please complete all fields!");
+        }
+        else {
+
+
+            const updatedTimestamp = new Date(); // Get current date and time
+            const updatedNotepadWithTimestamp = {
+                ...updatedNotepad,
+                timestamp: updatedTimestamp // Include timestamp field with current date and time
+            };
+            console.log(updatedNotepadWithTimestamp);
+            await axios.put(url, updatedNotepadWithTimestamp);
+            setShowUpdate(false);
+            loadData();
+        }
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -212,26 +241,37 @@ export default function Home() {
                         <ModalHeader>Update Notepad</ModalHeader>
                         <ModalCloseButton />
                         < ModalBody >
+                            {titleError && <Text color="red">Title is required</Text>}
                             <Input
                                 mb="5"
                                 placeholder="Your title here"
                                 name="title"
                                 value={updatedNotepad.title ? updatedNotepad.title : ""}
                                 onChange={handleUpdateChange}
+                                isRequired
                             />
+                            {contentError && <Text color="red" >Content is required</Text>}
                             <Textarea
                                 rows={10}
                                 placeholder="Your title here"
                                 name="content"
                                 value={updatedNotepad.content ? updatedNotepad.content : ""}
                                 onChange={handleUpdateChange}
+                                isRequired
                             />
+
                         </ModalBody>
                         < ModalFooter >
                             <Button colorScheme='gray' mr={3} onClick={handleCloseUpdateModal}>
                                 Cancel
                             </Button>
-                            <Button colorScheme={'green'} variant='solid' onClick={saveUpdatedNotepad} >Save changes</Button>
+                            <Button
+                                colorScheme={'green'}
+                                variant='solid'
+                                onClick={saveUpdatedNotepad}
+                            >
+                                Save changes
+                            </Button>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
@@ -263,6 +303,20 @@ export default function Home() {
                                 Cancel
                             </Button>
                             <Button colorScheme={'messenger'} variant='solid' onClick={handleCreate} >Create</Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+
+                <Modal isOpen={showAddedModal} onClose={handleSetShowAddedModal}>
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>Notepad</ModalHeader>
+                        <ModalCloseButton />
+                        < ModalBody >
+                            <Text color={'green.400'} fontWeight={'bold'} fontSize='xl' >Note added successfully!</Text>
+                        </ModalBody>
+                        < ModalFooter >
+                            <Button colorScheme={'messenger'} variant='solid' onClick={handleSetShowAddedModal} >Ok</Button>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
