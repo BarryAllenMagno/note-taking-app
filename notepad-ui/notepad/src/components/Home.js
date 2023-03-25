@@ -29,7 +29,7 @@ export default function Home() {
         }
         fetchData();
     }, []);
-// isOpen={showAddedModal} onClose={handleShowAddedModal}>
+    // <Modal isOpen={showUpdate} onClose={handleSetShowUpdate}>
     const url = "http://localhost:3001";
     const [notepadList, setNotepadList] = React.useState([]);
     const [id, setId] = React.useState(0);
@@ -41,18 +41,23 @@ export default function Home() {
     const [titleError, setTitleError] = React.useState(false);
     const [contentError, setContentError] = React.useState(false);
     const [showAddedModal, setShowAddedModal] = React.useState(false);
+    const [showComplete, setShowComplete] = React.useState(false);
+
+    function handleSetShowComplete() {
+        setShowComplete(false);
+    };
 
     function handleSetShowAddedModal() {
         setShowAddedModal(false);
-    }
+    };
 
     function handleCloseAddModal() {
         setShowAddModal(false)
-    }
+    };
 
     function handleOpenAddModal() {
         setShowAddModal(true)
-    }
+    };
 
     function handleTitleChange(e) {
         setTitle(e.target.value);
@@ -64,7 +69,7 @@ export default function Home() {
 
     async function handleCreate() {
         if (title === "" || content === "") {
-            alert("Please complete all fields!");
+            setShowComplete(true);
         }
         else {
             var inputData = {
@@ -74,7 +79,6 @@ export default function Home() {
             };
             var newNotepad = await axios.post(url, inputData);
             clearData();
-            // alert("Notepad added successfully!")
             setShowAddedModal(true);
             console.log(newNotepad);
             setShowAddModal(false);
@@ -149,10 +153,9 @@ export default function Home() {
     async function saveUpdatedNotepad() {
 
         if (updatedNotepad.title === "" || updatedNotepad.content === "") {
-            alert("Please complete all fields!");
+            setShowComplete(true);
         }
         else {
-
 
             const updatedTimestamp = new Date(); // Get current date and time
             const updatedNotepadWithTimestamp = {
@@ -317,6 +320,19 @@ export default function Home() {
                         </ModalBody>
                         < ModalFooter >
                             <Button colorScheme={'messenger'} variant='solid' onClick={handleSetShowAddedModal} >Ok</Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+                <Modal isOpen={showComplete} onClose={handleSetShowComplete}>
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>Notepad</ModalHeader>
+                        <ModalCloseButton />
+                        < ModalBody >
+                            <Text color={'red'} fontWeight={'bold'} fontSize='xl' >Please complete all fields.</Text>
+                        </ModalBody>
+                        < ModalFooter >
+                            <Button colorScheme={'messenger'} variant='solid' onClick={handleSetShowComplete} >Ok</Button>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
