@@ -2,7 +2,6 @@ import { ChakraProvider } from '@chakra-ui/react';
 import './App.css';
 import Home from './components/Home';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import CreateNotepad from './components/CreateNotepad';
 
 function App() {
   return (
