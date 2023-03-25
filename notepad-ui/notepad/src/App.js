@@ -11,7 +11,6 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/create" element={<CreateNotepad />} />
           </Routes>
         </Router>
 
