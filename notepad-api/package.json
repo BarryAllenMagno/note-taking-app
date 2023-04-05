@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "react-scripts start",
-    "build": "cd notepad-ui/notepad && react-scripts build",
+    "build": "cd notepad-ui/notepad && react-scripts build && mv build ../public",
     "eject": "react-scripts eject"
   },
   "author": "",
